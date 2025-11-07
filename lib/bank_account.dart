@@ -158,3 +158,54 @@ class PremiumAccount extends BankAccount implements InterestBearing {
     print("Interest of \$${interest} added. New Balance: \$${_balance}");
   }
 }
+
+class Bank {
+  List<BankAccount> _accounts = [];
+
+  // Add a new account
+  void addAccount(BankAccount account) {
+    _accounts.add(account);
+    print("Account Number ${account.accountNumber} added successfully.");
+  }
+
+  // Find account by account number
+  BankAccount? findAccount(int accountNumber) {
+    for (int i = 0; i < _accounts.length; i++) {
+      if (_accounts[i].accountNumber == accountNumber) {
+        return _accounts[i];
+      }
+    }
+    print("Account Number $accountNumber not found.");
+    return null;
+  }
+
+  // Transfer money between accounts
+  void transfer(int fromAccNo, int toAccNo, double amount) {
+    BankAccount? fromAccount = findAccount(fromAccNo);
+    BankAccount? toAccount = findAccount(toAccNo);
+
+    if (fromAccount != null && toAccount != null) {
+      double beforeBalance = fromAccount.balance;
+      fromAccount.withdraw(amount);
+      if (fromAccount.balance != beforeBalance) {
+        toAccount.deposit(amount);
+        print(
+          "Transferred \$${amount} from Account $fromAccNo to Account $toAccNo.",
+        );
+      } else {
+        print("Transfer failed due to insufficient balance or limits.");
+      }
+    } else {
+      print("Transfer failed. One or both accounts not found.");
+    }
+  }
+
+  // Generate report of all accounts
+  void generateReport() {
+    print("\n===== BANK ACCOUNTS REPORT =====");
+    for (int i = 0; i < _accounts.length; i++) {
+      _accounts[i].displayAccInfo();
+      print("-------------------------------");
+    }
+  }
+}
